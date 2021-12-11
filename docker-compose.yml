@@ -1,0 +1,7 @@
+version: '3'
+services:
+  application:
+    container_name: application
+    build: application
+    ports:
+      - "5888:5888"
