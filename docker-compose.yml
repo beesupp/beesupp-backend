@@ -5,3 +5,22 @@ services:
     build: application
     ports:
       - "5888:5888"
+    networks:
+      - main_nw
+  database:
+    container_name: database
+    image: postgres
+    networks:
+      - main_nw
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=bee_user
+      - POSTGRES_PASSWORD=bee1q2w3e4r
+      - POSTGRES_DB=bee_database
+    volumes:
+      - database_data:/var/lib/postgresql/data/
+networks:
+  main_nw:
+volumes:
+  database_data:
