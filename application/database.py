@@ -27,6 +27,8 @@ def init_database_tables():
     # If table don't exist, Create.
     if not engine.dialect.has_table(engine, "user"):
         Base.metadata.create_all(bind=engine)
+        # after table creation, insert def/mock data
+        inject_mock_data()
 
 def create_user(user_name):
     contains = bool(User.query.filter_by(name=user_name).first())
@@ -87,3 +89,7 @@ def get_all_vehicle_items():
         all_items_arr.append(each_item)
         print("Item listed: " + item.name)
     return all_items_arr
+
+def inject_mock_data():
+    create_user("BeeSuppDefUser")
+    create_vehicle("BeeSuppDefVehicle")
