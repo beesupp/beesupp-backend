@@ -60,7 +60,7 @@ def create_vehicle_item(item_name, item_vehicle_name, item_user_name):
             selected_vehicle.vehicle_item.append(new_item)
             db_session.commit()
 
-def get_all_users():
+def get_all_users_from_db():
     all_users_arr = []
     all_users = db_session.query(User)
     for user in all_users:
@@ -70,7 +70,7 @@ def get_all_users():
         print("User: " + user.name)
     return all_users_arr
 
-def get_all_vehicles():
+def get_all_vehicles_from_db():
     all_vehicles_arr = []
     all_vehicles = db_session.query(MercedesVehicle)
     for vehicle in all_vehicles:
@@ -80,7 +80,7 @@ def get_all_vehicles():
         print("Vehicle listed: " + vehicle.name)
     return all_vehicles_arr
 
-def get_all_vehicle_items():
+def get_all_vehicle_items_from_db():
     all_items_arr = []
     all_mercedes_vehicle_items = db_session.query(MercedesVehicleItem)
     for item in all_mercedes_vehicle_items:

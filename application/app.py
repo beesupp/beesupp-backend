@@ -7,7 +7,7 @@ app = Flask(__name__)
 # CRUD - READ requests
 @app.route('/get_all_users')
 def get_all_users():
-    all_users_dict = get_all_users()
+    all_users_dict = get_all_users_from_db()
     all_users_resp = {}
     all_users_resp['users'] = all_users_dict
     all_users_resp['code'] = 200
@@ -15,7 +15,7 @@ def get_all_users():
 
 @app.route('/get_all_vehicles')
 def get_all_vehicles():
-    all_vehicles_dict = get_all_vehicles()
+    all_vehicles_dict = get_all_vehicles_from_db()
     all_vehicles_resp = {}
     all_vehicles_resp['vehicles'] = all_vehicles_dict
     all_vehicles_resp['code'] = 200
@@ -23,7 +23,7 @@ def get_all_vehicles():
 
 @app.route('/get_all_vehicle_items')
 def get_all_vehicle_items():
-    all_vehicle_items_dict = get_all_vehicle_items()
+    all_vehicle_items_dict = get_all_vehicle_items_from_db()
     all_vehicle_items_resp = {}
     all_vehicle_items_resp['items'] = all_vehicle_items_dict
     all_vehicle_items_resp['code'] = 200
