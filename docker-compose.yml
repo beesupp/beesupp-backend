@@ -7,6 +7,10 @@ services:
       - "5888:5888"
     networks:
       - main_nw
+    environment:
+      - POSTGRES_USER=bee_user
+      - POSTGRES_PASSWORD=bee1q2w3e4r
+      - POSTGRES_DB=bee_database
   database:
     container_name: database
     image: postgres
