@@ -18,7 +18,7 @@ db_session = scoped_session(sessionmaker(autocommit=False,
 Base = declarative_base()
 Base.query = db_session.query_property()
 
-from model import User, MercedesVehicle, MercedesVehicleItem
+from model import User, Vehicle, Item
 # import all modules here that might define Models so that
 # they will be registered properly on the metadata.  Otherwise
 # you will have to import them first before calling init_database_tables()
@@ -40,23 +40,23 @@ def create_user(user_name):
 def create_vehicle(user_name, user_vehicle_name):
     selected_user = User.query.filter_by(name=user_name).first()
     if selected_user is not None:
-        selected_user_vehicles = User.query.join(MercedesVehicle).filter(
-            User.name == user_name).filter(MercedesVehicle.name == user_vehicle_name).all()
+        selected_user_vehicles = User.query.join(Vehicle).filter(
+            User.name == user_name).filter(Vehicle.name == user_vehicle_name).all()
         # if selected user does not have specified vehicle, insert it
         if len(selected_user_vehicles) == 0:
             selected_user_entry = User.query.get(selected_user.id)
-            new_vehicle = MercedesVehicle(user_vehicle_name)
+            new_vehicle = Vehicle(user_vehicle_name)
             selected_user_entry.vehicle.append(new_vehicle)
             db_session.commit()
 
 def create_vehicle_item(item_name, item_vehicle_name, item_user_name):
-    selected_vehicle = MercedesVehicle.query.join(User).filter(
-        User.name == item_user_name).filter(MercedesVehicle.name == item_vehicle_name).first()
+    selected_vehicle = Vehicle.query.join(User).filter(
+        User.name == item_user_name).filter(Vehicle.name == item_vehicle_name).first()
     if selected_vehicle is not None:
-        selected_vehicle_items = User.query.join(MercedesVehicle).join(MercedesVehicleItem).filter(User.name == item_user_name).filter(
-            MercedesVehicle.name == item_vehicle_name).filter(MercedesVehicleItem.name == item_name).all()
+        selected_vehicle_items = User.query.join(Vehicle).join(Item).filter(User.name == item_user_name).filter(
+            Vehicle.name == item_vehicle_name).filter(Item.name == item_name).all()
         if len(selected_vehicle_items) == 0:
-            new_item = MercedesVehicleItem(item_name)
+            new_item = Item(item_name)
             selected_vehicle.vehicle_item.append(new_item)
             db_session.commit()
 
@@ -72,7 +72,7 @@ def get_all_users_from_db():
 
 def get_all_vehicles_from_db():
     all_vehicles_arr = []
-    all_vehicles = db_session.query(MercedesVehicle)
+    all_vehicles = db_session.query(Vehicle)
     for vehicle in all_vehicles:
         each_vehicle = {}
         each_vehicle['name'] = vehicle.name
@@ -82,7 +82,7 @@ def get_all_vehicles_from_db():
 
 def get_all_vehicle_items_from_db():
     all_items_arr = []
-    all_mercedes_vehicle_items = db_session.query(MercedesVehicleItem)
+    all_mercedes_vehicle_items = db_session.query(Item)
     for item in all_mercedes_vehicle_items:
         each_item = {}
         each_item['name'] = item.name
@@ -92,4 +92,5 @@ def get_all_vehicle_items_from_db():
 
 def inject_mock_data():
     create_user("BeeSuppDefUser")
-    create_vehicle("BeeSuppDefVehicle")
+    create_vehicle("BeeSuppDefUser", "BeeSuppDefVehicle")
+    #create_vehicle_item()
