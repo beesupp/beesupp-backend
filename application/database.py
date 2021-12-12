@@ -2,6 +2,12 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+import logging
+import coloredlogs
+
+loggerTest = logging.getLogger("bee_TEST")
+loggerTest.setLevel(logging.DEBUG)
+coloredlogs.install(level='DEBUG', logger=loggerTest, milliseconds=True, fmt='[%(levelname)s]-> %(message)s')
 
 user = os.environ['POSTGRES_USER']
 pwd = os.environ['POSTGRES_PASSWORD']
@@ -65,7 +71,12 @@ def get_all_users_from_db():
     all_users = db_session.query(User)
     for user in all_users:
         each_user = {}
+        each_user['id'] = user.id
         each_user['name'] = user.name
+        if user.is_current_user:
+            each_user['is_active'] = "True"
+        else:
+            each_user['is_active'] = "False"
         all_users_arr.append(each_user)
         print("User: " + user.name)
     return all_users_arr
@@ -91,17 +102,61 @@ def get_all_vehicle_items_from_db():
         each_item['description'] = item.description
         each_item['price'] = item.price
         each_item['image'] = item.image
+        each_item['owner_name'] = item.owner
         all_items_arr.append(each_item)
         print("Item listed: " + item.name)
     return all_items_arr
 
+def get_all_user_vehicle_items_from_db(specific_username):
+    all_items_arr = []
+    all_mercedes_vehicle_items = db_session.query(Item).filter(Item.owner == specific_username).all()
+    for item in all_mercedes_vehicle_items:
+        each_item = {}
+        each_item['id'] = item.id
+        each_item['category'] = item.category
+        each_item['title'] = item.name
+        each_item['description'] = item.description
+        each_item['price'] = item.price
+        each_item['image'] = item.image
+        each_item['owner_name'] = item.owner
+        all_items_arr.append(each_item)
+        print("Item listed: " + item.name)
+    return all_items_arr
+
+def set_current_user(user_id):
+    curr_active_user = db_session.query(User).filter(User.is_current_user == True).first()
+    if curr_active_user is not None:
+        curr_active_user.is_current_user = False
+    selected_user = User.query.filter_by(id=user_id).first()
+    if selected_user is not None and selected_user.is_current_user == False:
+        selected_user.is_current_user = False
+        db_session.commit()
+
+def get_current_user():
+    curr_active_user = db_session.query(User).filter(User.is_current_user == True)
+    if curr_active_user is not None:
+        return curr_active_user.id
+
+def change_item_owner(item_name, new_owner_name):
+    selected_item = db_session.query(Item).filter(Item.name == item_name).first()
+    if selected_item is not None:
+        selected_item.owner = new_owner_name
+        db_session.commit()
+
 def inject_mock_data():
     create_user("BeeSuppDefUser")
     create_user("Ertan")
-    create_user("Oguzhan")
-    create_vehicle("BeeSuppDefUser", "BeeSuppDefVehicle")
+    create_user("Kivanc")
     create_vehicle("Ertan", "amg")
-    create_vehicle("Oguzhan", "c180")
-    create_vehicle_item("CatA", "AMG_Skin", "very cool", "1000", "background.png", "amg", "Ertan")
-    create_vehicle_item("CatA", "CSeries_Skin", "very cool", "1000", "background_2.png", "c180", "Oguzhan")
-    create_vehicle_item("CatB", "SSeries_Skin", "very cool", "10", "background_3.png", "c180", "Oguzhan")
+    create_vehicle("Ertan", "c180")
+    create_vehicle("Ertan", "s2000")
+    create_vehicle("Kivanc", "amg")
+    create_vehicle("Kivanc", "c180")
+    create_vehicle("Kivanc", "s2000")
+    create_vehicle("BeeSuppDefUser", "BeeSuppDefVehicle")
+    create_vehicle("BeeSuppDefUser", "amg")
+    create_vehicle("BeeSuppDefUser", "c180")
+    create_vehicle("BeeSuppDefUser", "s2000")
+    create_vehicle_item("Themes", "Default", "very cool", "1000", "default_inside.png", "amg", "BeeSuppDefUser")
+    create_vehicle_item("Themes", "Sport", "very cool", "1000", "sport_inside.png", "c180", "BeeSuppDefUser")
+    create_vehicle_item("NFTs", "Star", "very cool", "10", "star_inside.png", "s2000", "BeeSuppDefUser")

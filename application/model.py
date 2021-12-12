@@ -14,6 +14,7 @@ class User(Base):
     surname = Column(Text)
     created_date = Column(DateTime, default=datetime.utcnow)
     vehicle = relationship("Vehicle", back_populates="user")
+    is_current_user = Column(Boolean, default=False)
     def __init__(self, name):
         self.name = name
         self.created_date = datetime.now()
@@ -45,6 +46,7 @@ class Item(Base):
     description = Column(Text)
     price = Column(Text)
     image = Column(Text)
+    owner = Column(Text, default="None")
     vehicle_id = Column(Integer, ForeignKey("vehicle.id"))
     vehicle = relationship("Vehicle", back_populates="item")
 
