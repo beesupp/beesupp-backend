@@ -1,6 +1,7 @@
 from flask import Flask, request
 import json
 from database import *
+import payment
 
 app = Flask(__name__)
 
@@ -63,6 +64,19 @@ def create_new_vehicle_item():
     resp['code'] = 200
     return json.dumps(resp)
 '''
+
+@app.route('/buy_vehicle_item')
+def buy_vehicle_item():
+    buy_item_name = request.json["buy_item_name"]
+    pay_res = payment.buy(buy_item_name)
+    resp = {}
+    if pay_res:
+        resp['msg'] = "Success"
+        resp['code'] = 200
+    else:
+        resp['msg'] = "Failure"
+        resp['code'] = 1001
+    return json.dumps(resp)
 
 if __name__ == "__main__":
     init_database_tables()
