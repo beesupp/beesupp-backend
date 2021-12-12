@@ -48,15 +48,16 @@ def buy(item_name):
             'category1': 'Collectibles',
             'category2': 'Accessories',
             'itemType': 'PHYSICAL',
-            'price': '1000'
+            'price': '0.3'
         }
     ]
+
     request = {
         'locale': 'tr',
         'conversationId': '123456789',
-        'price': '1',
+        'price': '0.3',
         'paidPrice': '1000',
-        'currency': 'USD',
+        'currency': 'TRY',
         'installment': '1',
         'basketId': 'B67832',
         'paymentChannel': 'WEB',
@@ -68,7 +69,9 @@ def buy(item_name):
         'basketItems': basket_items
     }
     payment = iyzipay.Payment().create(request, options)
-    payment_result = json.loads(payment.read().decode('utf-8'))
+    payment_result_str = payment.read().decode('utf-8')
+    print(payment_result_str)
+    payment_result = json.loads(payment_result_str)
     if payment_result['status'] == "success":
         return True
     else:
