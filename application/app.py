@@ -3,6 +3,13 @@ import json
 from database import *
 import payment
 
+import logging
+import coloredlogs
+
+loggerTest = logging.getLogger("bee_TEST")
+loggerTest.setLevel(logging.DEBUG)
+coloredlogs.install(level='DEBUG', logger=loggerTest, milliseconds=True, fmt='[%(levelname)s]-> %(message)s')
+
 app = Flask(__name__)
 
 # CRUD - READ requests
@@ -13,6 +20,14 @@ def get_all_users():
     all_users_resp['users'] = all_users_dict
     all_users_resp['code'] = 200
     return json.dumps(all_users_resp)
+
+@app.route('/set_current_active_user', methods=['POST'])
+def set_current_active_user():
+    new_vehicle_name = request.json["vehicle_name"]
+    resp = {}
+    resp['msg'] = "Success"
+    resp['code'] = 200
+    return json.dumps(resp)
 
 @app.route('/get_all_vehicles')
 def get_all_vehicles():
@@ -25,6 +40,15 @@ def get_all_vehicles():
 @app.route('/get_all_vehicle_items')
 def get_all_vehicle_items():
     all_vehicle_items_dict = get_all_vehicle_items_from_db()
+    all_vehicle_items_resp = {}
+    all_vehicle_items_resp['items'] = all_vehicle_items_dict
+    all_vehicle_items_resp['code'] = 200
+    return json.dumps(all_vehicle_items_resp)
+
+@app.route('/get_all_user_vehicle_items', methods=['POST'])
+def get_all_user_vehicle_items():
+    selected_user_name = request.json["user_name"]
+    all_vehicle_items_dict = get_all_user_vehicle_items_from_db(selected_user_name)
     all_vehicle_items_resp = {}
     all_vehicle_items_resp['items'] = all_vehicle_items_dict
     all_vehicle_items_resp['code'] = 200
@@ -65,17 +89,31 @@ def create_new_vehicle_item():
     return json.dumps(resp)
 '''
 
-@app.route('/buy_vehicle_item')
+@app.route('/buy_vehicle_item', methods=['POST'])
 def buy_vehicle_item():
     buy_item_name = request.json["buy_item_name"]
+    loggerTest.warning("satin alinan: " + buy_item_name)
     pay_res = payment.buy(buy_item_name)
     resp = {}
     if pay_res:
         resp['msg'] = "Success"
         resp['code'] = 200
+        change_item_owner(buy_item_name, "Ertan")
     else:
         resp['msg'] = "Failure"
         resp['code'] = 1001
+    return json.dumps(resp)
+
+@app.route('/logged_user', methods=['POST'])
+def logged_user():
+    logged_user_id = request.json["user_id"]
+    if logged_user_id == 0:
+        loggerTest.warning("log user alinan: Kivanc")
+    else:
+        loggerTest.warning("log user alinan: Ertan")
+    resp = {}
+    resp['msg'] = "Success"
+    resp['code'] = 200
     return json.dumps(resp)
 
 if __name__ == "__main__":
