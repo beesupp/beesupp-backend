@@ -49,15 +49,15 @@ def create_vehicle(user_name, user_vehicle_name):
             selected_user_entry.vehicle.append(new_vehicle)
             db_session.commit()
 
-def create_vehicle_item(item_name, item_vehicle_name, item_user_name):
+def create_vehicle_item(item_category, item_name, item_description, item_price, item_image, item_vehicle_name, item_user_name):
     selected_vehicle = Vehicle.query.join(User).filter(
         User.name == item_user_name).filter(Vehicle.name == item_vehicle_name).first()
     if selected_vehicle is not None:
         selected_vehicle_items = User.query.join(Vehicle).join(Item).filter(User.name == item_user_name).filter(
             Vehicle.name == item_vehicle_name).filter(Item.name == item_name).all()
         if len(selected_vehicle_items) == 0:
-            new_item = Item(item_name)
-            selected_vehicle.vehicle_item.append(new_item)
+            new_item = Item(item_category, item_name, item_description, item_price, item_image)
+            selected_vehicle.item.append(new_item)
             db_session.commit()
 
 def get_all_users_from_db():
@@ -85,12 +85,23 @@ def get_all_vehicle_items_from_db():
     all_mercedes_vehicle_items = db_session.query(Item)
     for item in all_mercedes_vehicle_items:
         each_item = {}
-        each_item['name'] = item.name
+        each_item['id'] = item.id
+        each_item['category'] = item.category
+        each_item['title'] = item.name
+        each_item['description'] = item.description
+        each_item['price'] = item.price
+        each_item['image'] = item.image
         all_items_arr.append(each_item)
         print("Item listed: " + item.name)
     return all_items_arr
 
 def inject_mock_data():
     create_user("BeeSuppDefUser")
+    create_user("Ertan")
+    create_user("Oguzhan")
     create_vehicle("BeeSuppDefUser", "BeeSuppDefVehicle")
-    #create_vehicle_item()
+    create_vehicle("Ertan", "amg")
+    create_vehicle("Oguzhan", "c180")
+    create_vehicle_item("CatA", "AMG_Skin", "very cool", "1000", "background.png", "amg", "Ertan")
+    create_vehicle_item("CatA", "CSeries_Skin", "very cool", "1000", "background_2.png", "c180", "Oguzhan")
+    create_vehicle_item("CatB", "SSeries_Skin", "very cool", "10", "background_3.png", "c180", "Oguzhan")

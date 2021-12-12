@@ -48,14 +48,21 @@ def create_new_vehicle():
     resp['code'] = 200
     return json.dumps(resp)
 
+''' TODO  
 @app.route('/create_new_vehicle_item', methods=['POST'])
 def create_new_vehicle_item():
+    new_item_category = request.json["new_item_category"]
+    new_item_name = request.json["new_item_name"]
+    new_item_description = request.json["new_item_description"]
+    new_item_price = request.json["item_name"]
+    new_item_category = request.json["item_name"]
     new_vehicle_item = request.json["item_name"]
-    create_vehicle_item(item_name=new_vehicle_item, item_vehicle_name="BeeSuppDefVehicle", item_user_name="BeeSuppDefUser")
+    create_vehicle_item(new_item_category, new_item_name, new_item_description, new_item_price, new_item_image, "BeeSuppDefVehicle", "BeeSuppDefUser")
     resp = {}
     resp['msg'] = "Success"
     resp['code'] = 200
     return json.dumps(resp)
+'''
 
 if __name__ == "__main__":
     init_database_tables()

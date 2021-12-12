@@ -40,10 +40,19 @@ class Item(Base):
     __tablename__ = "item"
     # We always need an id
     id = Column(Integer, primary_key=True)
+    category = Column(Text)
+    name = Column(Text)
+    description = Column(Text)
+    price = Column(Text)
+    image = Column(Text)
     vehicle_id = Column(Integer, ForeignKey("vehicle.id"))
     vehicle = relationship("Vehicle", back_populates="item")
-    name = Column(Text)
+
     created_date = Column(DateTime, default=datetime.utcnow)
-    def __init__(self, name):
+    def __init__(self, category, name, description, price, image):
+        self.category = category
         self.name = name
+        self.description = description
+        self.price = price
+        self.image = image
         self.created_date = datetime.now()
